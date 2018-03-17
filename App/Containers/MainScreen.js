@@ -46,6 +46,11 @@ class MainScreen extends PureComponent {
     this.fetchHeadlines()
   }
 
+  /**
+   * 
+   * @param {int} page
+   * this function use to fetch news data
+   */
   fetchNews(page = 1) {
     const newsParams = {
       sources: 'cnn',
@@ -57,6 +62,11 @@ class MainScreen extends PureComponent {
     this.props.getNews(newsParams)
   }
 
+  /**
+   * 
+   * @param {int} page 
+   * this function use to fetch headlines data
+   */
   fetchHeadlines(page = 1) {
     const headlinesParams = {
       category: 'general',
@@ -72,6 +82,7 @@ class MainScreen extends PureComponent {
     const {news, headlines} = nextProps
     let params = null
 
+    // Add loding data on start fetching news
     if (news.fetching) {
       if (this.state.newsPages > 1) {
         params = {
@@ -90,6 +101,7 @@ class MainScreen extends PureComponent {
       }
     }
 
+    // Add loding data on start fetching headlines
     if (headlines.fetching) {
       params = {
         ...params,
@@ -198,6 +210,12 @@ class MainScreen extends PureComponent {
     }
   }
 
+  /**
+   * 
+   * @param {'news', 'headlines'} type 
+   * @param {object} item
+   * this function use to check liked status 
+   */
   checkLiked (type, item) {
     if (type === 'news') {
       return this.props.likedNews.includes(item.url)
@@ -206,6 +224,11 @@ class MainScreen extends PureComponent {
     }
   }
 
+  /**
+   * 
+   * @param {object} param0 // value from flatlist
+   * @param {'news', 'headlines'} type 
+   */
   _render ({item, index}, type = 'news') {
     if (type === 'news') {
       if ((index + 1) % 5 === 0) {
@@ -226,6 +249,11 @@ class MainScreen extends PureComponent {
     )
   }
 
+  /**
+   * 
+   * @param {'news', 'headlines'} type
+   * this function use to handle infinite scroll, fetching data on reach end
+   */
   _onReachEnd (type) {
     if (type === 'news') {
       const {payload} = this.props.news
@@ -247,6 +275,9 @@ class MainScreen extends PureComponent {
     }
   }
 
+  /**
+   * function to handler refresh page on pull to refresh
+  */
   _onRefresh (type) {
     this.setState({
       newsPages: 1,
@@ -256,6 +287,9 @@ class MainScreen extends PureComponent {
     this.fetchHeadlines()
   }
 
+  /**
+   * use to render headlines
+   */
   renderHeadlines () {
     return (
       <View>
@@ -281,6 +315,9 @@ class MainScreen extends PureComponent {
     )
   }
 
+  /**
+   * use to render error
+   */
   renderError () {
     return(
       <View style={[styles.mainContainer, {justifyContent: 'center', alignItems: 'center'}]}>
@@ -300,7 +337,9 @@ class MainScreen extends PureComponent {
     return (
       <View style={styles.mainContainer}>
         {this.state.news.length === 0
+          // render error
           ? this.renderError()
+          // render list
           : <FlatList
             showsVerticalScrollIndicator={false}
             extraData={this.props.likedNews}

@@ -13,6 +13,9 @@ import styles from './Styles/NewsDetailScreenStyle'
 
 class NewsDetailScreen extends Component {
 
+  /**
+   * use to render loading webview
+   */
   renderLoading () {
     return (
       <View style={[styles.mainContainer]}>
@@ -71,6 +74,9 @@ class NewsDetailScreen extends Component {
     )
   }
 
+  /**
+   * use to render error webview
+   */
   renderError () {
     return(
       <View style={[styles.mainContainer, {justifyContent: 'center', alignItems: 'center'}]}>
