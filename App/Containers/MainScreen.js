@@ -9,8 +9,11 @@ import LikeActions from '../Redux/LikeRedux'
 
 import NewsItem from '../Components/NewsItem'
 
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 // Styles
 import styles from './Styles/MainScreenStyle'
+import { Colors } from '../Themes';
 
 class MainScreen extends PureComponent {
   constructor(props) {
@@ -36,8 +39,8 @@ class MainScreen extends PureComponent {
   }
   
   componentDidMount() {
-   this.fetchNews()
-   this.fetchHeadlines()
+    this.fetchNews()
+    this.fetchHeadlines()
   }
 
   fetchNews(page = 1) {
@@ -64,10 +67,11 @@ class MainScreen extends PureComponent {
 
   componentWillReceiveProps (nextProps) {
     const {news, headlines} = nextProps
+    let params = null
 
     if (!news.fetching) {
 
-      let params = {
+      params = {
         isRefreshing: false
       }
 
@@ -78,21 +82,15 @@ class MainScreen extends PureComponent {
           newsPages: this.state.newsPages + 1
         }
       }
-
-      this.setState({
-        ...this.state,
-        ...params
-      })
     }
     
     if (news.fetching) {
-      this.setState({
-        isRefreshing: true
-      })
+      params = {
+        isRefreshing: false
+      }
     }
 
     if (!headlines.fetching && headlines.error === null) {
-      let params = null
 
       if (headlines.error === null) {
         params = {
@@ -101,13 +99,12 @@ class MainScreen extends PureComponent {
           headlinesPages: this.state.headlinesPages + 1
         }
       }
+    }
 
-      if (params) {
-        this.setState({
-          ...this.state,
-          ...params
-        })
-      }
+    if (params) {
+      this.setState({
+        ...params
+      })
     }
   }
 
@@ -117,7 +114,7 @@ class MainScreen extends PureComponent {
     } else {
       this.isRenderHeadlines = false
     }
-    return index
+    return index.toString();
   }
 
   onPressItem (item) {
@@ -184,10 +181,16 @@ class MainScreen extends PureComponent {
   }
 
   renderHeadlines () {
-    console.tron.warn('HELLO')
     return (
-      <View >
-        <Text>HEADLINES</Text>
+      <View>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+          <Icon
+            name={'check-circle'}
+            color={Colors.primary}
+            size={25}
+          />
+          <Text style={{textAlign: 'right'}}>HEADLINE NEWS!</Text>
+        </View>
         <FlatList
           pagingEnabled
           horizontal

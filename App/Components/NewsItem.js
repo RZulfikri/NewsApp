@@ -12,7 +12,7 @@ const noImage = 'http://noodleblvd.com/wp-content/uploads/2016/10/No-Image-Avail
 
 const NewsItem = (props) => {
   return (
-    <CardContainer style={{marginVertical: 10, width: width - (Metrics.baseMargin * 2), height: 200}} >
+    <CardContainer style={{marginVertical: 10, width: width - (Metrics.baseMargin * 2)}} >
       <Image source={{uri: props.data.urlToImage || noImage}} style={{height: 150, width: width - (Metrics.baseMargin * 2)}} />
       <View style={styles.contentContainer}>
         <Text style={{flexWrap: 'wrap', flex: 1}} ellipsizeMode={'tail'} numberOfLines={2}>{props.data.title}</Text>
