@@ -13,6 +13,7 @@
 import { call, put, select } from 'redux-saga/effects'
 import NewsActions from '../Redux/NewsRedux'
 import { NewsSelectors } from '../Redux/NewsRedux'
+import handleError from '../Lib/handleError'
 
 // export function * getNews (api, action) {
 //   const { data } = action
@@ -36,6 +37,7 @@ export function * getNews (api, action) {
   const response = yield call(api.getNews, data)
 
   if (response.ok) {
+    // used to update redux data
     // let responseData = response.data
     // if (data.page > 1) {
     //   const {payload} = yield select(NewsSelectors.getNewsData)
@@ -53,6 +55,7 @@ export function * getNews (api, action) {
 
     yield put(NewsActions.getNewsSuccess(response.data))
   } else {
+    handleError(response.problem)
     yield put(NewsActions.getNewsFailure(response))
   }
 }
@@ -63,6 +66,7 @@ export function * getHeadlines (api, action) {
   const response = yield call(api.getHeadlines, data)
 
   if (response.ok) {
+    // used to update redux data
     // let responseData = response.data
     // if (data.page > 1) {
     //   const {payload} = yield select(NewsSelectors.getHeadlinesData)
@@ -80,6 +84,7 @@ export function * getHeadlines (api, action) {
 
     yield put(NewsActions.getHeadlinesSuccess(response.data))
   } else {
+    handleError(response.problem)
     yield put(NewsActions.getHeadlinesFailure(response))
   }
 }
