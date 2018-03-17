@@ -23,7 +23,8 @@ class MainScreen extends PureComponent {
       headlines: [],
       newsPages: 1,
       headlinesPages: 1,
-      isRefreshing: false
+      isRefreshing: false,
+      isLoadMore: false
     }
     this._render = this._render.bind(this)
     this.fetchNews = this.fetchNews.bind(this)
@@ -50,7 +51,7 @@ class MainScreen extends PureComponent {
       pageSize: 10,
       page
     }
-
+    this.loadingData = [null, null, null, null, null, null, null, null, null, null]
     this.props.getNews(newsParams)
   }
 
@@ -69,33 +70,101 @@ class MainScreen extends PureComponent {
     const {news, headlines} = nextProps
     let params = null
 
-    if (!news.fetching) {
+    if (news.fetching) {
+      if (this.state.newsPages > 1) {
+        params = {
+          ...params,
+          news: this.state.news.concat(this.loadingData)
+        }
+      } else {
+        params = {
+          ...params,
+          news: this.loadingData
+        }
+      }
+      params = {
+        ...params,
+        isRefreshing: false,
+      }
+    }
 
+    if (headlines.fetching) {
+      params = {
+        ...params,
+        headlines: this.loadingData
+      }
+
+      if (this.state.newsPages > 1) {
+        params = {
+          ...params,
+          headlines: this.loadingData.concat(this.loadingData)
+        }
+      } else {
+        params = {
+          ...params,
+          headlines: this.loadingData
+        }
+      }
+    }
+    
+    if (!news.fetching) {
       params = {
         isRefreshing: false
       }
 
       if (news.error === null) {
+        if (this.state.newsPages > 1) {
+          const nullIndex = this.state.news.findIndex((item) => item === null)
+          let newNews = [...this.state.news]
+          
+          if (nullIndex >= 0) {
+            const length = (newNews.length) - nullIndex
+            newNews.splice(nullIndex, length, ...news.payload.articles)
+          }
+
+          params = {
+            ...params,
+            news: newNews
+          }
+        } else {
+          params = {
+            ...params,
+            news: news.payload.articles,
+          }
+        }
+
         params = {
           ...params,
-          news: news.payload.articles,
           newsPages: this.state.newsPages + 1
         }
-      }
-    }
-    
-    if (news.fetching) {
-      params = {
-        isRefreshing: false
       }
     }
 
     if (!headlines.fetching && headlines.error === null) {
 
       if (headlines.error === null) {
+        if (this.state.headlinesPages > 1) {
+          const nullIndex = this.state.headlines.findIndex((item) => item === null)
+          let newHeadlines = [...this.state.headlines]
+          
+          if (nullIndex >= 0) {
+            const length = (newHeadlines.length) - nullIndex
+            newHeadlines.splice(nullIndex, length, ...headlines.payload.articles)
+          }
+
+          params = {
+            ...params,
+            headlines: newHeadlines
+          }
+
+        } else {
+          params = {
+            ...params,
+            headlines: headlines.payload.articles,
+          }
+        }
         params = {
           ...params,
-          headlines: headlines.payload.articles,
           headlinesPages: this.state.headlinesPages + 1
         }
       }
@@ -146,6 +215,11 @@ class MainScreen extends PureComponent {
         this.isRenderHeadlines = false
       }
     }
+
+    if (item === null) {
+      return <NewsItem data={null} />
+    }
+
     return(
       <TouchableOpacity onPress={() => this.onPressItem(item)}>
         <NewsItem data={item} onPressLike={() => this.onPressLike(type, item)} isLike={this.checkLiked(type, item)} type={type} />
@@ -158,6 +232,9 @@ class MainScreen extends PureComponent {
       const {payload} = this.props.news
       if (payload) {
         if (this.state.news.length <= payload.totalResults) {
+          this.setState({
+            isLoadMore: true
+          })
           this.fetchNews(this.state.newsPages)
         }
       }

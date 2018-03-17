@@ -36,22 +36,22 @@ export function * getNews (api, action) {
   const response = yield call(api.getNews, data)
 
   if (response.ok) {
-    let responseData = response.data
-    if (data.page > 1) {
-      const {payload} = yield select(NewsSelectors.getNewsData)
-      if (payload) {
+    // let responseData = response.data
+    // if (data.page > 1) {
+    //   const {payload} = yield select(NewsSelectors.getNewsData)
+    //   if (payload) {
 
-        let {articles} = payload
-        let newArticles = [...articles].concat(response.data.articles)
+    //     let {articles} = payload
+    //     let newArticles = [...articles].concat(response.data.articles)
 
-        responseData = {
-          ...responseData,
-          articles: newArticles
-        }
-      }
-    }
+    //     responseData = {
+    //       ...responseData,
+    //       articles: newArticles
+    //     }
+    //   }
+    // }
 
-    yield put(NewsActions.getNewsSuccess(responseData))
+    yield put(NewsActions.getNewsSuccess(response.data))
   } else {
     yield put(NewsActions.getNewsFailure(response))
   }
@@ -63,22 +63,22 @@ export function * getHeadlines (api, action) {
   const response = yield call(api.getHeadlines, data)
 
   if (response.ok) {
-    let responseData = response.data
-    if (data.page > 1) {
-      const {payload} = yield select(NewsSelectors.getHeadlinesData)
-      if (payload) {
+    // let responseData = response.data
+    // if (data.page > 1) {
+    //   const {payload} = yield select(NewsSelectors.getHeadlinesData)
+    //   if (payload) {
 
-        let {articles} = payload
-        let newArticles = [...articles].concat(response.data.articles)
+    //     let {articles} = payload
+    //     let newArticles = [...articles].concat(response.data.articles)
 
-        responseData = {
-          ...responseData,
-          articles: newArticles
-        }
-      }
-    }
+    //     responseData = {
+    //       ...responseData,
+    //       articles: newArticles
+    //     }
+    //   }
+    // }
 
-    yield put(NewsActions.getHeadlinesSuccess(responseData))
+    yield put(NewsActions.getHeadlinesSuccess(response.data))
   } else {
     yield put(NewsActions.getHeadlinesFailure(response))
   }
