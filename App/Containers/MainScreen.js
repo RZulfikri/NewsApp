@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { View, Text, KeyboardAvoidingView, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, KeyboardAvoidingView, FlatList, TouchableOpacity, Button } from 'react-native'
 import { connect } from 'react-redux'
 
 // Add Actions - replace 'Your' with whatever your reducer is called :)
@@ -10,6 +10,7 @@ import LikeActions from '../Redux/LikeRedux'
 import NewsItem from '../Components/NewsItem'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
+import IconOcti from 'react-native-vector-icons/Octicons'
 
 // Styles
 import styles from './Styles/MainScreenStyle'
@@ -35,6 +36,7 @@ class MainScreen extends PureComponent {
     this.onPressLike = this.onPressLike.bind(this)
     this.renderHeadlines = this.renderHeadlines.bind(this)
     this.checkLiked = this.checkLiked.bind(this)
+    this.renderError = this.renderError.bind(this)
     
     this.isRenderHeadlines = false
   }
@@ -112,60 +114,57 @@ class MainScreen extends PureComponent {
         isRefreshing: false
       }
 
-      if (news.error === null) {
-        if (this.state.newsPages > 1) {
-          const nullIndex = this.state.news.findIndex((item) => item === null)
-          let newNews = [...this.state.news]
-          
-          if (nullIndex >= 0) {
-            const length = (newNews.length) - nullIndex
-            newNews.splice(nullIndex, length, ...news.payload.articles)
-          }
+      const nullIndex = this.state.news.findIndex((item) => item === null)
+      let newNews = [...this.state.news]
 
-          params = {
-            ...params,
-            news: newNews
-          }
-        } else {
-          params = {
-            ...params,
-            news: news.payload.articles,
-          }
+      if (news.error === null) {
+        if (nullIndex >= 0) {
+          const length = (newNews.length) - nullIndex
+          newNews.splice(nullIndex, length, ...news.payload.articles)
         }
 
         params = {
           ...params,
+          news: newNews,
           newsPages: this.state.newsPages + 1
+        }
+      } else {
+        if (nullIndex >= 0) {
+          const length = (newNews.length) - nullIndex
+          newNews.splice(nullIndex, length)
+        }
+
+        params = {
+          ...params,
+          news: newNews,
         }
       }
     }
 
-    if (!headlines.fetching && headlines.error === null) {
+    if (!headlines.fetching) {
+      const nullIndex = this.state.headlines.findIndex((item) => item === null)
+      let newHeadlines = [...this.state.headlines]
 
       if (headlines.error === null) {
-        if (this.state.headlinesPages > 1) {
-          const nullIndex = this.state.headlines.findIndex((item) => item === null)
-          let newHeadlines = [...this.state.headlines]
-          
-          if (nullIndex >= 0) {
-            const length = (newHeadlines.length) - nullIndex
-            newHeadlines.splice(nullIndex, length, ...headlines.payload.articles)
-          }
-
-          params = {
-            ...params,
-            headlines: newHeadlines
-          }
-
-        } else {
-          params = {
-            ...params,
-            headlines: headlines.payload.articles,
-          }
+        if (nullIndex >= 0) {
+          const length = (newHeadlines.length) - nullIndex
+          newHeadlines.splice(nullIndex, length, ...headlines.payload.articles)
         }
+
         params = {
           ...params,
+          headlines: newHeadlines,
           headlinesPages: this.state.headlinesPages + 1
+        }
+      } else {
+        if (nullIndex >= 0) {
+          const length = (newHeadlines.length) - nullIndex
+          newHeadlines.splice(nullIndex, length)
+        }
+
+        params = {
+          ...params,
+          headlines: newHeadlines
         }
       }
     }
@@ -282,20 +281,38 @@ class MainScreen extends PureComponent {
     )
   }
 
+  renderError () {
+    return(
+      <View style={[styles.mainContainer, {justifyContent: 'center', alignItems: 'center'}]}>
+        <IconOcti
+          name='alert'
+          size={100}
+        />
+        <Text>Please check your internet connection</Text>
+        <View style={{marginVertical: 10}}>
+          <Button title={'Retry'} onPress={this._onRefresh} color={Colors.primary} />
+        </View>
+      </View>
+    )
+  }
+
   render () {
     return (
       <View style={styles.mainContainer}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          extraData={this.props.likedNews}
-          data={this.state.news}
-          keyExtractor={this._keyExtractor}
-          renderItem={this._render}
-          onEndReached={() => this._onReachEnd('news')}
-          onRefresh={this._onRefresh}
-          refreshing={this.state.isRefreshing}
-          ItemSeparatorComponent={() => this.isRenderHeadlines ? this.renderHeadlines() : null}
-        />
+        {this.state.news.length === 0
+          ? this.renderError()
+          : <FlatList
+            showsVerticalScrollIndicator={false}
+            extraData={this.props.likedNews}
+            data={this.state.news}
+            keyExtractor={this._keyExtractor}
+            renderItem={this._render}
+            onEndReached={() => this._onReachEnd('news')}
+            onRefresh={this._onRefresh}
+            refreshing={this.state.isRefreshing}
+            ItemSeparatorComponent={() => this.isRenderHeadlines ? this.renderHeadlines() : null}
+          />
+        }
       </View>
     )
   }

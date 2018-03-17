@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { View, WebView, ActivityIndicator, Text } from 'react-native'
+import { View, WebView, ActivityIndicator, Text, Button } from 'react-native'
 import { connect } from 'react-redux'
 import Placeholder from 'rn-placeholder'
+import Icon from 'react-native-vector-icons/Octicons'
 
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
@@ -14,7 +15,7 @@ class NewsDetailScreen extends Component {
 
   renderLoading () {
     return (
-      <View style={[styles.mainContainer, {paddingVertical: 10}]}>
+      <View style={[styles.mainContainer]}>
         <View style={{marginVertical: 10}}>
           <Placeholder.Box
             width="100%"
@@ -70,14 +71,31 @@ class NewsDetailScreen extends Component {
     )
   }
 
+  renderError () {
+    return(
+      <View style={[styles.mainContainer, {justifyContent: 'center', alignItems: 'center'}]}>
+        <Icon
+          name='alert'
+          size={100}
+        />
+        <Text>Please check your internet connection</Text>
+        <View style={{marginVertical: 10}}>
+          <Button title={'Retry'} onPress={() => this.refs.webview.reload()} color={Colors.primary} />
+        </View>
+      </View>
+    )
+  }
+
   render () {
     const {params} = this.props.navigation.state
     return (
       <View style={{flex: 1}}>
          <WebView
+            ref={'webview'}
             source={{uri: params.url}}
             style={{flex: 1}}
             renderLoading={() => this.renderLoading()}
+            renderError={() => this.renderError()}
             startInLoadingState
           />
       </View>
