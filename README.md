@@ -1,4 +1,14 @@
 #  NewsApp
+
+#  Description
+
+Simple sample react native news application, implementing infinite scroll, webview, redux persit, loading placeholder, etc. This app using 
+
+1. Ignite
+2. http://newsapi.org
+3. rn-placeholder
+4. react-native-vector-icons
+
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
 
 * Standard compliant React Native App Utilizing [Ignite](https://github.com/infinitered/ignite)
@@ -9,7 +19,11 @@
 
 **Step 2:** cd to the cloned repo:
 
-**Step 3:** Install the Application with `yarn` or `npm i`
+**Step 3:** please register to http://newsapi.org and paste API_KEY at .env.example
+
+**Step 4:** rename .env.example file to .env file
+
+**Step 5:** Install the Application with `yarn` or `npm i`
 
 
 ## :arrow_forward: How to Run App
@@ -45,8 +59,8 @@ This project uses [react-native-config](https://github.com/luggit/react-native-c
 and other sensitive information in a `.env` file:
 
 ```
-API_URL=https://myapi.com
-GOOGLE_MAPS_API_KEY=abcdefgh
+API_URL = http://newsapi.org/v2/
+NEWS_API_KEY = news_api_key
 ```
 
 and access them from React Native like so:
@@ -55,7 +69,7 @@ and access them from React Native like so:
 import Secrets from 'react-native-config'
 
 Secrets.API_URL  // 'https://myapi.com'
-Secrets.GOOGLE_MAPS_API_KEY  // 'abcdefgh'
+Secrets.NEWS_API_KEY  // 'abcdefgh'
 ```
 
 The `.env` file is ignored by git keeping those secrets out of your repo.
