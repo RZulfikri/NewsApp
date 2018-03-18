@@ -71,7 +71,7 @@ class MainScreen extends PureComponent {
     const headlinesParams = {
       category: 'general',
       sortBy: 'popularity',
-      pageSize: 10,
+      pageSize: 5,
       page
     }
 
