@@ -6,7 +6,7 @@ const apiKey = Secrets.NEWS_API_KEY
 const apiUrl = Secrets.API_URL
 // our "constructor"
 
-const create = () => {
+const create = (baseURL = apiUrl) => {
   // ------
   // STEP 1
   // ------
@@ -15,7 +15,7 @@ const create = () => {
   //
   const api = apisauce.create({
     // base URL is read from the "constructor"
-    baseURL: apiUrl,
+    baseURL,
     // here are some default headers
     headers: {
       'Cache-Control': 'no-cache'
